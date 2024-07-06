@@ -1,0 +1,16 @@
+{
+    // Python ファイル用の設定
+    "[python]": {
+      // VS Code のフォーマッターとして Black Formatter 拡張を使う
+      "editor.defaultFormatter": "ms-python.black-formatter",
+      // ファイル保存時に自動でフォーマットする
+      "editor.formatOnSave": true
+    },
+  
+    // Python 拡張が提供するフォーマッター連携は無効にしておく
+    "python.formatting.provider": "none",
+  
+    // black にコマンドライン引数を渡す場合（Black Formatter 拡張用）
+    // "black-formatter.args": ["--line-length", "100"],
+  
+  }
