@@ -9,100 +9,14 @@ import const
 
 class Screen:
 
-    # 入力ファイル選択ボタン押下時処理
-    def doChoice(self):
+    # 画像の初期化
+    def __init__(self):
 
-        # ファイル選択ダイアログの起動
-        path_list = self.screenLogic.get_wav_path()
-        self.add_file_name_list(path_list)
+        self.screenLogic = screen_logic.ScreenLogic()
 
-    # 出力先フォルダ選択ボタン押下時処理
-    def doOutFolder(self):
-
-        # フォルダ選択ダイアログの起動
-        path = self.screenLogic.get_folder_path()
-        if len(path) == 0:
-            return
-
-        # 値の設定
-        self.set_out_folder_entry(path)
-
-    # 削除ボタン押下時処理
-    def doDelete(self):
-
-        # リストボックスの取得
-        choice = self.file_name_listbox.curselection()
-
-        # リストの選択がされていない場合
-        if not choice:
-            self.delete_button["state"] = tk.DISABLED
-            return
-
-        # リストの要素が空の場合
-        if not self.item_list:
-            self.delete_button["state"] = tk.DISABLED
-            return
-
-        # 選択箇所の削除
-        del self.item_list[choice[0]]
-        self.file_name_list_var.set(self.item_list)
-
-        # ボタンの活性制御
-        self.get_del_button_control()
-
-    # リストボックス選択時処理
-    def get_selected(self, event):
-        self.get_del_button_control()
-
-    # リストボックスの活性制御
-    def get_del_button_control(self):
-
-        # リストボックスの取得
-        choice = self.file_name_listbox.curselection()
-
-        # リストの選択がされていない場合
-        if not choice:
-            self.delete_button["state"] = tk.DISABLED
-            return
-
-        # リストの要素が空の場合
-        if not self.item_list:
-            self.delete_button["state"] = tk.DISABLED
-            return
-
-        self.delete_button["state"] = tk.NORMAL
-
-    # 処理開始ボタン押下時処理
-    def doShori(self):
-
-        self.screenSave()
-        self.cut_process()
-
-    # キャンセルボタン押下時処理
-    def doCancel(self):
-        self.root.destroy()
-
-    # 初期化ボタン押下時処理
-    def doInitialize(self):
-        self.root.destroy()
-
-    # 画面項目を取得
-    def screenSave(self):
-
-        setting = const.INITIAL_SETTIMG
-
-        setting["input_file_path"] = self.item_list
-        setting["out_folder_path"] = self.get_out_folder_entry()
-
-        self.screenLogic.writeJSON(const.SETTING_FILE, setting)
-
-    # 画面項目を再設定
-    def screenLoad(self):
-
-        setting = self.screenLogic.readJSON(const.SETTING_FILE)
-
-        self.set_file_name_list(setting["input_file_path"])
-        self.set_out_folder_entry(setting["out_folder_path"])
+        self.root = tk.Tk()
+        self.screenInit()
+        self.root.mainloop()
 
     # 画面の初期化
     def screenInit(self):
@@ -157,7 +71,7 @@ class Screen:
             self.settei_frame, text="キャンセル", command=self.doCancel
         )
         self.initialize_button = tk.Button(
-            self.settei_frame, text="初期設定に戻す", command=self.doCancel
+            self.settei_frame, text="初期設定に戻す", command=self.doInitialize
         )
 
         # オブジェクトの配置
@@ -188,16 +102,98 @@ class Screen:
         # 画面項目の設定
         self.screenLoad()
 
+        # 削除ボタンの活性制御
         self.get_del_button_control()
 
-    # 画像の初期化
-    def __init__(self):
+    # 入力ファイル選択ボタン押下時処理
+    def doChoice(self):
 
-        self.screenLogic = screen_logic.ScreenLogic()
+        # ファイル選択ダイアログの起動
+        path_list = self.screenLogic.get_wav_path()
+        self.add_file_name_list(path_list)
 
-        self.root = tk.Tk()
-        self.screenInit()
-        self.root.mainloop()
+    # 出力先フォルダ選択ボタン押下時処理
+    def doOutFolder(self):
+
+        # フォルダ選択ダイアログの起動
+        path = self.screenLogic.get_folder_path()
+        if len(path) == 0:
+            return
+
+        # 値の設定
+        self.set_out_folder_entry(path)
+
+    # 削除ボタン押下時処理
+    def doDelete(self):
+
+        # リストボックスの取得
+        choice = self.file_name_listbox.curselection()
+
+        # リストの選択がされていない場合
+        if not choice:
+            self.delete_button["state"] = tk.DISABLED
+            return
+
+        # リストの要素が空の場合
+        if not self.item_list:
+            self.delete_button["state"] = tk.DISABLED
+            return
+
+        # 選択箇所の削除
+        del self.item_list[choice[0]]
+        self.file_name_list_var.set(self.item_list)
+
+        # ボタンの活性制御
+        self.get_del_button_control()
+
+    # 処理開始ボタン押下時処理
+    def doShori(self):
+
+        self.screenSave()
+        self.cut_process()
+
+    # キャンセルボタン押下時処理
+    def doCancel(self):
+        self.root.destroy()
+
+    # 初期化ボタン押下時処理
+    def doInitialize(self):
+        setting = const.INITIAL_SETTIMG
+        self.screenSet(setting)
+
+    # リストボックス選択時処理
+    def get_selected(self, event):
+        self.get_del_button_control()
+
+    # リストボックスの活性制御
+    def get_del_button_control(self):
+
+        # リストボックスの取得
+        choice = self.file_name_listbox.curselection()
+
+        # リストの選択がされていない場合
+        if not choice:
+            self.delete_button["state"] = tk.DISABLED
+            return
+
+        # リストの要素が空の場合
+        if not self.item_list:
+            self.delete_button["state"] = tk.DISABLED
+            return
+
+        self.delete_button["state"] = tk.NORMAL
+
+    # 画面項目を保存
+    def screenSave(self):
+
+        setting = self.screenGet()
+        self.screenLogic.writeJSON(const.SETTING_FILE, setting)
+
+    # 画面項目を読み込み
+    def screenLoad(self):
+
+        setting = self.screenLogic.readJSON(const.SETTING_FILE)
+        self.screenSet(setting)
 
     def cut_process(self):
         cutLogic = muon_cut.CutLogic()
@@ -216,6 +212,22 @@ class Screen:
     """
     getter&setter
     """
+
+    # 画面項目を取得
+    def screenGet(self):
+
+        setting = const.INITIAL_SETTIMG
+
+        setting["input_file_path"] = self.item_list
+        setting["out_folder_path"] = self.get_out_folder_entry()
+
+        return setting
+
+    # 画面項目を取得
+    def screenSet(self, setting):
+
+        self.set_file_name_list(setting["input_file_path"])
+        self.set_out_folder_entry(setting["out_folder_path"])
 
     # リストボックスを設定
     def set_file_name_list(self, path_list):
