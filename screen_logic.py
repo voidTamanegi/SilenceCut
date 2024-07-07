@@ -30,23 +30,23 @@ class ScreenLogic:
 
         # ファイルの存在チェック
         if not (os.path.exists(path)):
-            return const.InitialSettimg
+            return const.INITIAL_SETTIMG
 
         # 設定ファイルの読み取り
         with open(path, encoding="utf-8") as file:
             setting = json.load(file)
 
         # デフォルトとキーが一致しているか確認
-        if self.check_common_keys(setting, const.InitialSettimg):
+        if self.check_common_keys(setting, const.INITIAL_SETTIMG):
             return setting
         else:
-            return const.InitialSettimg
+            return const.INITIAL_SETTIMG
 
     # settingJSONの書き込み
     def writeJSON(self, path, jsondata):
 
         # デフォルトとキーが一致しているか確認
-        if not self.check_common_keys(jsondata, const.InitialSettimg):
+        if not self.check_common_keys(jsondata, const.INITIAL_SETTIMG):
             return False
 
         # ファイルの存在チェック

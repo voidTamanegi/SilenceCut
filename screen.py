@@ -7,26 +7,19 @@ import muon_cut
 import const
 
 
-# ファイルパスを指定
-folder_path = "C:\\Users\\akimk\\work\\python_project\\desktopMascot\\desktopMascot"
-input_file = "setting.json"
-
-
 class Screen:
 
-    # ファイル選択ボタン押下時処理
+    # 入力ファイル選択ボタン押下時処理
     def doChoice(self):
 
         # ファイル選択ダイアログの起動
-        # screenLogic = screen_logic.ScreenLogic()
         path_list = self.screenLogic.get_wav_path()
-        self.set_file_name_list(path_list)
+        self.add_file_name_list(path_list)
 
     # 出力先フォルダ選択ボタン押下時処理
     def doOutFolder(self):
 
-        # ファイル選択ダイアログの起動
-        # screenLogic = screen_logic.ScreenLogic()
+        # フォルダ選択ダイアログの起動
         path = self.screenLogic.get_folder_path()
         if len(path) == 0:
             return
@@ -34,7 +27,7 @@ class Screen:
         # 値の設定
         self.set_out_folder_entry(path)
 
-    # ファイル選択ボタン押下時処理
+    # 削除ボタン押下時処理
     def doDelete(self):
 
         # リストボックスの取得
@@ -57,9 +50,6 @@ class Screen:
         # ボタンの活性制御
         self.get_del_button_control()
 
-        # print(self.file_name_list_var)
-        # print(type(self.file_name_list_var))
-
     # リストボックス選択時処理
     def get_selected(self, event):
         self.get_del_button_control()
@@ -80,18 +70,13 @@ class Screen:
             self.delete_button["state"] = tk.DISABLED
             return
 
-        # 範囲外の要素が指定されている場合
-        # if len(self.item_list) < self.file_name_listbox.curselection()[0]:
-        #     self.delete_button["state"] = tk.DISABLED
-        #     return
-
         self.delete_button["state"] = tk.NORMAL
 
     # 処理開始ボタン押下時処理
     def doShori(self):
 
         self.screenSave()
-        # self.cut_process()
+        self.cut_process()
 
     # キャンセルボタン押下時処理
     def doCancel(self):
@@ -104,17 +89,17 @@ class Screen:
     # 画面項目を取得
     def screenSave(self):
 
-        setting = const.InitialSettimg
+        setting = const.INITIAL_SETTIMG
 
         setting["input_file_path"] = self.item_list
         setting["out_folder_path"] = self.get_out_folder_entry()
 
-        self.screenLogic.writeJSON(r"./setting.ini", setting)
+        self.screenLogic.writeJSON(const.SETTING_FILE, setting)
 
     # 画面項目を再設定
     def screenLoad(self):
 
-        setting = self.screenLogic.readJSON(r"./setting.ini")
+        setting = self.screenLogic.readJSON(const.SETTING_FILE)
 
         self.set_file_name_list(setting["input_file_path"])
         self.set_out_folder_entry(setting["out_folder_path"])
@@ -175,9 +160,6 @@ class Screen:
             self.settei_frame, text="初期設定に戻す", command=self.doCancel
         )
 
-        # フレームのサイズを不変にする
-        # self.sentakusi_frame.propagate(False)
-
         # オブジェクトの配置
         self.settei_frame.place(x=0, y=0)
         self.midasi_label1.pack()
@@ -191,6 +173,9 @@ class Screen:
         self.shori_button.pack()
         self.cancel_button.pack()
         self.initialize_button.pack()
+
+        # フレームのサイズを不変にする
+        self.root.propagate(False)
 
         # 最前面に表示
         self.root.attributes("-topmost", True)
@@ -210,9 +195,6 @@ class Screen:
 
         self.screenLogic = screen_logic.ScreenLogic()
 
-        path = os.path.join(folder_path, input_file)
-        # self.settingJSON = self.readJSON(path)
-
         self.root = tk.Tk()
         self.screenInit()
         self.root.mainloop()
@@ -229,27 +211,24 @@ class Screen:
                 print("err:")
                 return
 
-        # exe作成時は有効化する
         print("処理完了 何かキーを入力してください...")
-        # input()
 
     """
     getter&setter
     """
 
+    # リストボックスを設定
     def set_file_name_list(self, path_list):
-        # リストボックスに追加
         self.item_list.clear()
 
         if path_list:
-
             for path in path_list:
                 self.item_list.append(path)
 
         self.file_name_list_var.set(self.item_list)
 
+    # リストボックスに追加
     def add_file_name_list(self, list):
-        # リストボックスに追加
         for str in list:
             self.item_list.append(str)
 
