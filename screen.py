@@ -25,17 +25,18 @@ class Screen:
         setumeiFont = font.Font(self.root, family="Yu Gothic UI", size=8)
 
         # rootの作成
+        self.root.title("無音切りつめ君")
         self.root.geometry("600x500+200+200")
 
         # frameの作成
         self.input_frame = tk.LabelFrame(self.root, text="入力ファイル")
         self.output_frame = tk.LabelFrame(self.root, text="出力フォルダ")
         self.settei_frame = tk.LabelFrame(self.root, text="詳細オプション")
-        self.start_frame = tk.Frame(self.root, bd=1, relief=tk.RIDGE)
+        self.start_frame = tk.Frame(self.root)
         self.log_frame = tk.Frame(self.root, bd=1, relief=tk.RIDGE)
 
         # # labelの作成
-        self.log_label = tk.Label(self.log_frame, text="", font=setumeiFont)
+        self.log_label = tk.Label(self.log_frame, text="", width=80, font=setumeiFont)
 
         self.option_label00 = tk.Label(
             self.settei_frame, text="無音判定閾値 : ", font=setumeiFont
@@ -121,18 +122,25 @@ class Screen:
         )
 
         # オブジェクトの配置
+        # 入力ファイル欄
         self.input_frame.pack(pady=(30, 0))
         # self.input_label1.pack(anchor=tk.W)
         self.file_name_listbox.pack(padx=10, pady=(5, 0))
         self.delete_button.pack(side=tk.RIGHT, padx=10, pady=10)
         self.file_button.pack(side=tk.RIGHT, pady=10)
 
+        # 出力ファイル欄
         self.output_frame.pack(pady=(20, 0))
         # self.output_label1.pack(anchor=tk.W)
         self.outFolderEntry.pack(padx=10, pady=(5, 0))
         self.out_folder_button.pack(side=tk.RIGHT, padx=10, pady=10)
 
-        self.settei_frame.pack(pady=(20, 0))
+        # 出力欄
+        self.log_frame.pack(side=tk.BOTTOM, pady=(0, 40))
+        self.log_label.pack(side=tk.LEFT)
+
+        # 詳細設定欄
+        self.settei_frame.pack(side=tk.LEFT, padx=(50, 0))
         self.option_label00.grid(row=0, column=0, padx=(10, 0))
         self.option_label10.grid(row=1, column=0, padx=(10, 0))
         self.option_label20.grid(row=2, column=0, padx=(10, 0))
@@ -143,13 +151,11 @@ class Screen:
         self.option_label11.grid(row=1, column=2, padx=(0, 10))
         self.option_label21.grid(row=2, column=2, padx=(0, 10))
 
-        self.start_frame.pack()
-        self.shori_button.pack(pady=(20, 0))
-        self.cancel_button.pack()
-        self.initialize_button.pack(pady=(20, 0))
-
-        self.log_frame.pack()
-        self.log_label.pack()
+        # システムボタン欄
+        self.start_frame.pack(side=tk.RIGHT, padx=(0, 50))
+        self.shori_button.pack()
+        self.cancel_button.pack(pady=10)
+        self.initialize_button.pack()
 
         # フレームのサイズを不変にする
         self.root.propagate(False)
@@ -166,7 +172,7 @@ class Screen:
         self.screenLoad()
 
         # 削除ボタンの活性制御
-        self.get_del_button_control()
+        self.delButtonControl()
 
     # 入力ファイル選択ボタン押下時処理
     def doChoice(self):
@@ -207,7 +213,7 @@ class Screen:
         self.file_name_list_var.set(self.item_list)
 
         # ボタンの活性制御
-        self.get_del_button_control()
+        self.delButtonControl()
 
     # 処理開始ボタン押下時処理
     def doShori(self):
@@ -225,10 +231,10 @@ class Screen:
 
     # リストボックス選択時処理
     def get_selected(self, event):
-        self.get_del_button_control()
+        self.delButtonControl()
 
     # リストボックスの活性制御
-    def get_del_button_control(self):
+    def delButtonControl(self):
 
         # リストボックスの取得
         choice = self.file_name_listbox.curselection()
@@ -244,6 +250,30 @@ class Screen:
             return
 
         self.delete_button["state"] = tk.NORMAL
+
+    def activationControl(self, flg):
+        if flg == 1:
+            self.file_button["state"] = tk.DISABLED
+            self.out_folder_button["state"] = tk.DISABLED
+            self.delete_button["state"] = tk.DISABLED
+            self.shori_button["state"] = tk.DISABLED
+            self.cancel_button["state"] = tk.DISABLED
+            self.initialize_button["state"] = tk.DISABLED
+            self.threshold_spinbox["state"] = tk.DISABLED
+            self.duration_spinbox["state"] = tk.DISABLED
+            self.seek_spinbox["state"] = tk.DISABLED
+            return
+
+        self.file_button["state"] = tk.NORMAL
+        self.out_folder_button["state"] = tk.NORMAL
+        self.shori_button["state"] = tk.NORMAL
+        self.cancel_button["state"] = tk.NORMAL
+        self.initialize_button["state"] = tk.NORMAL
+        self.threshold_spinbox["state"] = tk.NORMAL
+        self.duration_spinbox["state"] = tk.NORMAL
+        self.seek_spinbox["state"] = tk.NORMAL
+
+        self.delButtonControl()
 
     # 画面項目を保存
     def screenSave(self):
@@ -264,17 +294,21 @@ class Screen:
         )
 
         self.log_label["text"] = "処理開始"
+        # すべて非活性
+        self.activationControl(1)
+        self.root.update()
 
         muon_lists = cutLogic.get_yusei_list(self.item_list)
         out_folder_path = self.get_out_folder_entry()
 
-        self.log_label["text"] = "音声ファイルの出力を開始:"
         for path in self.item_list:
             if not (cutLogic.get_nonslience(path, out_folder_path, muon_lists)):
                 print("err:")
                 return
 
         self.log_label["text"] = "処理完了"
+        # 非活性状態の解除
+        self.activationControl(0)
 
     """
     getter&setter
