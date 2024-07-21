@@ -32,7 +32,7 @@ class CutLogic:
             sum_sound,
             min_silence_len=self.min_silence_duration,
             silence_thresh=self.silence_threshold,
-            seek_step=2,
+            seek_step=self.seek_step,
         )
         print(muon_lists)
 
@@ -70,9 +70,12 @@ class CutLogic:
         return new_file_path
 
     # 画像の初期化
-    def __init__(self):
+    def __init__(self, silence_threshold, min_silence_duration, seek_step):
         # 無音の閾値[dB?]
-        self.silence_threshold = -60
+        self.silence_threshold = silence_threshold
 
         # 指定秒数以上の無音のみ検出[ms]
-        self.min_silence_duration = 500
+        self.min_silence_duration = min_silence_duration
+
+        # シーク幅[ms]
+        self.seek_step = seek_step

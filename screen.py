@@ -25,68 +25,131 @@ class Screen:
         setumeiFont = font.Font(self.root, family="Yu Gothic UI", size=8)
 
         # rootの作成
-        self.root.geometry("600x600+200+200")
+        self.root.geometry("600x500+200+200")
 
         # frameの作成
-        self.settei_frame = tk.Frame(self.root, bd=0)
+        self.input_frame = tk.LabelFrame(self.root, text="入力ファイル")
+        self.output_frame = tk.LabelFrame(self.root, text="出力フォルダ")
+        self.settei_frame = tk.LabelFrame(self.root, text="詳細オプション")
+        self.start_frame = tk.Frame(self.root, bd=1, relief=tk.RIDGE)
+        self.log_frame = tk.Frame(self.root, bd=1, relief=tk.RIDGE)
 
-        # labelの作成
-        self.midasi_label1 = tk.Label(
-            self.settei_frame, text="キャラクター", font=midasiFont
+        # # labelの作成
+        self.log_label = tk.Label(self.log_frame, text="", font=setumeiFont)
+
+        self.option_label00 = tk.Label(
+            self.settei_frame, text="無音判定閾値 : ", font=setumeiFont
         )
 
-        self.saizenmen_var = tk.BooleanVar()
-        saizenmen_ch = tk.Checkbutton(
-            self.settei_frame, text="常に手前に表示する", variable=self.saizenmen_var
+        self.option_label01 = tk.Label(
+            self.settei_frame, text="[-dB]", font=setumeiFont
         )
 
-        self.setumei_label1 = tk.Label(
-            self.settei_frame, text="画面の最前面表示", font=setumeiFont
+        self.option_label10 = tk.Label(
+            self.settei_frame, text="無音判定時間 : ", font=setumeiFont
         )
+
+        self.option_label11 = tk.Label(self.settei_frame, text="[ms]", font=setumeiFont)
+
+        self.option_label20 = tk.Label(
+            self.settei_frame, text="処理ステップ : ", font=setumeiFont
+        )
+
+        self.option_label21 = tk.Label(self.settei_frame, text="[ms]", font=setumeiFont)
+
+        # self.saizenmen_var = tk.BooleanVar()
+        # saizenmen_ch = tk.Checkbutton(
+        #     self.settei_frame, text="常に手前に表示する", variable=self.saizenmen_var
+        # )
 
         # Listboxの作成
-        self.item_list = ["Easy", "Normal", "Hard"]
+        self.item_list = []
         self.file_name_list_var = tk.StringVar(self.settei_frame, value=self.item_list)
         self.file_name_listbox = tk.Listbox(
-            self.settei_frame, listvariable=self.file_name_list_var
+            self.input_frame, listvariable=self.file_name_list_var, height=5, width=80
         )
 
         # Entryの作成
-        self.outFolderEntry = tk.Entry(self.settei_frame)
+        self.outFolderEntry = tk.Entry(self.output_frame, width=80)
+
+        # spinbox
+        self.threshold_spinbox = tk.Spinbox(
+            self.settei_frame,
+            from_=-80,
+            to=0,
+            increment=1,
+            width=5,
+        )
+
+        self.duration_spinbox = tk.Spinbox(
+            self.settei_frame,
+            from_=100,
+            to=1000,
+            increment=10,
+            width=5,
+        )
+
+        self.seek_spinbox = tk.Spinbox(
+            self.settei_frame,
+            from_=1,
+            to=100,
+            increment=1,
+            width=5,
+        )
 
         # buttonの作成
         self.file_button = tk.Button(
-            self.settei_frame, text="ファイル選択", command=self.doChoice
+            self.input_frame, text="ファイル選択", command=self.doChoice, width=10
         )
         self.out_folder_button = tk.Button(
-            self.settei_frame, text="フォルダ選択", command=self.doOutFolder
+            self.output_frame, text="フォルダ選択", command=self.doOutFolder, width=10
         )
         self.delete_button = tk.Button(
-            self.settei_frame, text="削除", command=self.doDelete
+            self.input_frame, text="削除", command=self.doDelete, width=10
         )
         self.shori_button = tk.Button(
-            self.settei_frame, text="処理開始", command=self.doShori
+            self.start_frame, text="処理開始", command=self.doShori, width=10
         )
         self.cancel_button = tk.Button(
-            self.settei_frame, text="キャンセル", command=self.doCancel
+            self.start_frame, text="キャンセル", command=self.doCancel, width=10
         )
         self.initialize_button = tk.Button(
-            self.settei_frame, text="初期設定に戻す", command=self.doInitialize
+            self.start_frame,
+            text="初期設定に戻す",
+            command=self.doInitialize,
+            width=14,
         )
 
         # オブジェクトの配置
-        self.settei_frame.place(x=0, y=0)
-        self.midasi_label1.pack()
-        self.file_name_listbox.pack()
-        saizenmen_ch.pack()
-        self.setumei_label1.pack()
-        self.outFolderEntry.pack()
-        self.file_button.pack()
-        self.out_folder_button.pack()
-        self.delete_button.pack()
-        self.shori_button.pack()
+        self.input_frame.pack(pady=(30, 0))
+        # self.input_label1.pack(anchor=tk.W)
+        self.file_name_listbox.pack(padx=10, pady=(5, 0))
+        self.delete_button.pack(side=tk.RIGHT, padx=10, pady=10)
+        self.file_button.pack(side=tk.RIGHT, pady=10)
+
+        self.output_frame.pack(pady=(20, 0))
+        # self.output_label1.pack(anchor=tk.W)
+        self.outFolderEntry.pack(padx=10, pady=(5, 0))
+        self.out_folder_button.pack(side=tk.RIGHT, padx=10, pady=10)
+
+        self.settei_frame.pack(pady=(20, 0))
+        self.option_label00.grid(row=0, column=0, padx=(10, 0))
+        self.option_label10.grid(row=1, column=0, padx=(10, 0))
+        self.option_label20.grid(row=2, column=0, padx=(10, 0))
+        self.threshold_spinbox.grid(row=0, column=1)
+        self.duration_spinbox.grid(row=1, column=1)
+        self.seek_spinbox.grid(row=2, column=1)
+        self.option_label01.grid(row=0, column=2, padx=(0, 10))
+        self.option_label11.grid(row=1, column=2, padx=(0, 10))
+        self.option_label21.grid(row=2, column=2, padx=(0, 10))
+
+        self.start_frame.pack()
+        self.shori_button.pack(pady=(20, 0))
         self.cancel_button.pack()
-        self.initialize_button.pack()
+        self.initialize_button.pack(pady=(20, 0))
+
+        self.log_frame.pack()
+        self.log_label.pack()
 
         # フレームのサイズを不変にする
         self.root.propagate(False)
@@ -148,7 +211,6 @@ class Screen:
 
     # 処理開始ボタン押下時処理
     def doShori(self):
-
         self.screenSave()
         self.cut_process()
 
@@ -158,7 +220,7 @@ class Screen:
 
     # 初期化ボタン押下時処理
     def doInitialize(self):
-        setting = const.INITIAL_SETTIMG
+        setting = const.INITIAL_SETTIMG.copy()
         self.screenSet(setting)
 
     # リストボックス選択時処理
@@ -196,18 +258,23 @@ class Screen:
         self.screenSet(setting)
 
     def cut_process(self):
-        cutLogic = muon_cut.CutLogic()
+        setting = self.screenGet()
+        cutLogic = muon_cut.CutLogic(
+            setting["threshold"], -setting["duration"], setting["seek"]
+        )
+
+        self.log_label["text"] = "処理開始"
 
         muon_lists = cutLogic.get_yusei_list(self.item_list)
         out_folder_path = self.get_out_folder_entry()
 
-        print("音声ファイルの出力を開始:")
+        self.log_label["text"] = "音声ファイルの出力を開始:"
         for path in self.item_list:
             if not (cutLogic.get_nonslience(path, out_folder_path, muon_lists)):
                 print("err:")
                 return
 
-        print("処理完了 何かキーを入力してください...")
+        self.log_label["text"] = "処理完了"
 
     """
     getter&setter
@@ -216,18 +283,24 @@ class Screen:
     # 画面項目を取得
     def screenGet(self):
 
-        setting = const.INITIAL_SETTIMG
+        setting = const.INITIAL_SETTIMG.copy()
 
         setting["input_file_path"] = self.item_list
         setting["out_folder_path"] = self.get_out_folder_entry()
+        setting["threshold"] = self.get_threshold_spinbox()
+        setting["duration"] = self.get_duration_spinbox()
+        setting["seek"] = self.get_seek_spinbox()
 
         return setting
 
-    # 画面項目を取得
+    # 画面項目を設定
     def screenSet(self, setting):
 
         self.set_file_name_list(setting["input_file_path"])
         self.set_out_folder_entry(setting["out_folder_path"])
+        self.set_threshold_spinbox(setting["threshold"])
+        self.set_duration_spinbox(setting["duration"])
+        self.set_seek_spinbox(setting["seek"])
 
     # リストボックスを設定
     def set_file_name_list(self, path_list):
@@ -254,6 +327,56 @@ class Screen:
         if len(self.outFolderEntry.get()) != 0:
             self.outFolderEntry.delete(0, tk.END)
         self.outFolderEntry.insert(0, str)
+
+    def get_threshold_spinbox(self):
+
+        val = self.threshold_spinbox.get()
+
+        # 値が空 or 数値以外の場合、初期値に変更
+        if val == "" or not (str.isdigit(val)):
+            val = const.INITIAL_SETTIMG["threshold"]
+            self.set_threshold_spinbox(val)
+
+        return int(val)
+
+    def set_threshold_spinbox(self, str):
+        # 値の設定
+        if len(self.threshold_spinbox.get()) != 0:
+            self.threshold_spinbox.delete(0, tk.END)
+        self.threshold_spinbox.insert(0, str)
+
+    def get_duration_spinbox(self):
+
+        val = self.duration_spinbox.get()
+
+        # 値が空 or 数値以外の場合、初期値に変更
+        if val == "" or not (str.isdigit(val)):
+            val = const.INITIAL_SETTIMG["duration"]
+            self.set_threshold_spinbox(val)
+
+        return int(val)
+
+    def set_duration_spinbox(self, str):
+        # 値の設定
+        if len(self.duration_spinbox.get()) != 0:
+            self.duration_spinbox.delete(0, tk.END)
+        self.duration_spinbox.insert(0, str)
+
+    def get_seek_spinbox(self):
+        val = self.seek_spinbox.get()
+
+        # 値が空 or 数値以外の場合、初期値に変更
+        if val == "" or not (str.isdigit(val)):
+            val = const.INITIAL_SETTIMG["seek"]
+            self.set_threshold_spinbox(val)
+
+        return int(val)
+
+    def set_seek_spinbox(self, str):
+        # 値の設定
+        if len(self.seek_spinbox.get()) != 0:
+            self.seek_spinbox.delete(0, tk.END)
+        self.seek_spinbox.insert(0, str)
 
 
 # メイン関数
