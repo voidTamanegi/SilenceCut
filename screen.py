@@ -1,7 +1,6 @@
 # from tkinter import *
 import tkinter as tk
 import tkinter.font as font
-import os
 import screen_logic
 import muon_cut
 import const
@@ -21,8 +20,7 @@ class Screen:
     # 画面の初期化
     def screenInit(self):
 
-        midasiFont = font.Font(self.root, family="Yu Gothic UI", size=10, weight="bold")
-        setumeiFont = font.Font(self.root, family="Yu Gothic UI", size=8)
+        baseFont = font.Font(self.root, family="Yu Gothic UI", size=8)
 
         # rootの作成
         self.root.title("無音切りつめ君")
@@ -36,32 +34,25 @@ class Screen:
         self.log_frame = tk.Frame(self.root, bd=1, relief=tk.RIDGE)
 
         # # labelの作成
-        self.log_label = tk.Label(self.log_frame, text="", width=80, font=setumeiFont)
+        self.log_label = tk.Label(self.log_frame, text="", width=80, font=baseFont)
 
         self.option_label00 = tk.Label(
-            self.settei_frame, text="無音判定閾値 : ", font=setumeiFont
+            self.settei_frame, text="無音判定閾値 : ", font=baseFont
         )
 
-        self.option_label01 = tk.Label(
-            self.settei_frame, text="[-dB]", font=setumeiFont
-        )
+        self.option_label01 = tk.Label(self.settei_frame, text="[-dB]", font=baseFont)
 
         self.option_label10 = tk.Label(
-            self.settei_frame, text="無音判定時間 : ", font=setumeiFont
+            self.settei_frame, text="無音判定時間 : ", font=baseFont
         )
 
-        self.option_label11 = tk.Label(self.settei_frame, text="[ms]", font=setumeiFont)
+        self.option_label11 = tk.Label(self.settei_frame, text="[ms]", font=baseFont)
 
         self.option_label20 = tk.Label(
-            self.settei_frame, text="処理ステップ : ", font=setumeiFont
+            self.settei_frame, text="処理ステップ : ", font=baseFont
         )
 
-        self.option_label21 = tk.Label(self.settei_frame, text="[ms]", font=setumeiFont)
-
-        # self.saizenmen_var = tk.BooleanVar()
-        # saizenmen_ch = tk.Checkbutton(
-        #     self.settei_frame, text="常に手前に表示する", variable=self.saizenmen_var
-        # )
+        self.option_label21 = tk.Label(self.settei_frame, text="[ms]", font=baseFont)
 
         # Listboxの作成
         self.item_list = []
@@ -124,14 +115,12 @@ class Screen:
         # オブジェクトの配置
         # 入力ファイル欄
         self.input_frame.pack(pady=(30, 0))
-        # self.input_label1.pack(anchor=tk.W)
         self.file_name_listbox.pack(padx=10, pady=(5, 0))
         self.delete_button.pack(side=tk.RIGHT, padx=10, pady=10)
         self.file_button.pack(side=tk.RIGHT, pady=10)
 
         # 出力ファイル欄
         self.output_frame.pack(pady=(20, 0))
-        # self.output_label1.pack(anchor=tk.W)
         self.outFolderEntry.pack(padx=10, pady=(5, 0))
         self.out_folder_button.pack(side=tk.RIGHT, padx=10, pady=10)
 
@@ -411,8 +400,3 @@ class Screen:
         if len(self.seek_spinbox.get()) != 0:
             self.seek_spinbox.delete(0, tk.END)
         self.seek_spinbox.insert(0, str)
-
-
-# メイン関数
-if __name__ == "__main__":
-    m = Screen()
